@@ -12,7 +12,7 @@ app.get('/',(req, res) => {
 });
 
 const mensagens = [
-  'primeira mensagem','segunda mensagem'
+  'primeira mensagem','segunda mensagem',"terceira mensagem"
 ];
 
 // - [GET] /mensagens - Retorna a lista de mensagens
@@ -21,7 +21,7 @@ app.get('/mensagens',(req, res) => {
 });
 
 // - [GET] /mensagens/{id} - Retorna apenas uma unica mensagem pelo ID
-app.get('/mensagens:id',(req, res) => {
+app.get('/mensagens/:id',(req, res) => {
   const id = req.params.id - 1;
 
   const mensagem = mensagens[id];
@@ -29,7 +29,7 @@ app.get('/mensagens:id',(req, res) => {
   res.send(mensagem);
 });
 
-// - [post] /mensagens - Cria uma nova mensagens
+// - [POST] /mensagens - Cria uma nova mensagens
 app.post('/mensagens',(req, res) => {
   const mensagem = req.body.mensagem;
 
@@ -38,8 +38,8 @@ app.post('/mensagens',(req, res) => {
   res.send(`Mensagem criada com sucesso: '${mensagem}'`);
 });
 
-// - [GET] /mensagens/{id} - Atualiza uma mensagem pelo ID
-app.put('/mensagens:id',(req, res) => {
+// - [PUT] /mensagens/{id} - Atualiza uma mensagem pelo ID
+app.put('/mensagens/:id',(req, res) => {
   const id = req.params.id - 1;
 
   const mensagem = req.body.mensagem;
