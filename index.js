@@ -30,7 +30,7 @@ app.get('/mensagens/:id',(req, res) => {
   res.send(mensagem);
 });
 
-// - [POST] /mensagens - Cria uma nova mensagens
+// - [POST] /mensagens - Cria uma nova mensagem
 app.post('/mensagens',(req, res) => {
   const mensagem = req.body.mensagem;
 
