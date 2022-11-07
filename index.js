@@ -12,7 +12,18 @@ app.get('/',(req, res) => {
 });
 
 const mensagens = [
-  'primeira mensagem','segunda mensagem',"terceira mensagem"
+  {
+    "id":1,
+    "texto":"primeira mensagem"
+  },  
+  { 
+    "id":2,
+    "texto":"segunda mensagem"
+  },
+  { 
+    "id":3,
+    "texto":"terceira mensagem"
+  }    
 ];
 
 // - [GET] /mensagens - Retorna a lista de mensagens
@@ -23,40 +34,61 @@ app.get('/mensagens',(req, res) => {
 
 // - [GET] /mensagens/{id} - Retorna apenas uma unica mensagem pelo ID
 app.get('/mensagens/:id',(req, res) => {
-  const id = req.params.id - 1;
+    const id = req.params.id - 1;
 
-  const mensagem = mensagens[id];
+    const mensagem = mensagens[id];
 
-  res.send(mensagem);
+        if(!mensagem){
+            res.send('Mensagem não encontrada.');
+   
+            return;
+        }
+
+    res.send(mensagem);
 });
 
 // - [POST] /mensagens - Cria uma nova mensagem
 app.post('/mensagens',(req, res) => {
-  const mensagem = req.body.mensagem;
+    const mensagem = req.body;
 
-  mensagens.push(mensagem);
+    if (!mensagem || !mensagem.texto) {
+      res.send('Mensagem inválida.');
+
+      return;
+  };
+
+    mensagem.id = mensagens.length + 1;
+    mensagens.push(mensagem);
   
-  res.send(`Mensagem criada com sucesso: '${mensagem}'`);
+    res.send(mensagem);
 });
 
 // - [PUT] /mensagens/{id} - Atualiza uma mensagem pelo ID
 app.put('/mensagens/:id',(req, res) => {
-  const id = req.params.id - 1;
+    const id = req.params.id - 1;
+    
+    const mensagem = mensagens[id];
 
-  const mensagem = req.body.mensagem;
+    const novoTexto = req.body.texto;
 
-  mensagens[id] = mensagem;
+    if (!novoTexto) {
+      res.send('Mensagem inválida.');
 
-  res.send(`Mensagem atualizada com sucesso: '${mensagem}.'`);
+      return;
+  }
+
+    mensagem.texto = novoTexto
+
+    res.send(mensagem);
 });
 
 // - [DELETE] /mensagens/{id} - Deleta uma mensagem pelo ID
 app.delete('/mensagens/:id',(req, res) => {
-  const id = req.params.id - 1;
+    const id = req.params.id - 1;
 
-  delete mensagens[id] 
+    delete mensagens[id] 
 
-  res.send('Mensagem deletada com sucesso.');
+    res.send('Mensagem deletada com sucesso.');
 });
 
 app.listen(port, () => {
