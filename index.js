@@ -7,7 +7,7 @@ const port = 3000;
 
 app.use(bodyParser.json());
 
-app.get('/',(req, res) => {
+app.get('/hello',(req, res) => {
   res.send('hello world');
 });
 
@@ -25,72 +25,90 @@ const mensagens = [
     "texto":"terceira mensagem"
   }    
 ];
+                                           //Só exibe mensagens que tem informação
+const getMensagensValidas = () => mensagens.filter(Boolean);
+                                                  //Encontra um objeto que foi descrito
+const getMensagemById = id => getMensagensValidas().find(msg => msg.id === id);
 
 // - [GET] /mensagens - Retorna a lista de mensagens
 app.get('/mensagens',(req, res) => {
-                     //só exibe mensagens que tem informação
-  res.send(mensagens.filter(Boolean));
+                     
+  res.send(getMensagensValidas());
 });
 
 // - [GET] /mensagens/{id} - Retorna apenas uma unica mensagem pelo ID
 app.get('/mensagens/:id',(req, res) => {
-    const id = req.params.id - 1;
+             //Operador + converte pra number
+  const id = +req.params.id;
+                            
+  const mensagem = getMensagemById(id);
 
-    const mensagem = mensagens[id];
-
-        if(!mensagem){
-            res.send('Mensagem não encontrada.');
+    if(!mensagem){
+      res.send('Mensagem não encontrada.');
    
-            return;
-        }
+      return;
+    };
 
-    res.send(mensagem);
+  res.send(mensagem);
 });
 
 // - [POST] /mensagens - Cria uma nova mensagem
 app.post('/mensagens',(req, res) => {
-    const mensagem = req.body;
+  
+  const mensagem = req.body;
 
     if (!mensagem || !mensagem.texto) {
       res.send('Mensagem inválida.');
 
       return;
-  };
+    };
 
-    mensagem.id = mensagens.length + 1;
-    mensagens.push(mensagem);
+  mensagem.id = mensagens.length + 1;
+  mensagens.push(mensagem);
   
-    res.send(mensagem);
+  res.send(mensagem);
 });
 
 // - [PUT] /mensagens/{id} - Atualiza uma mensagem pelo ID
 app.put('/mensagens/:id',(req, res) => {
-    const id = req.params.id - 1;
-    
-    const mensagem = mensagens[id];
+  
+  const id = +req.params.id;
+  
+  const mensagem = getMensagemById(id);
 
-    const novoTexto = req.body.texto;
+  const novoTexto = req.body.texto;
 
     if (!novoTexto) {
       res.send('Mensagem inválida.');
 
       return;
-  }
+    };
 
-    mensagem.texto = novoTexto
+  mensagem.texto = novoTexto;
 
-    res.send(mensagem);
+  res.send(mensagem);
 });
 
 // - [DELETE] /mensagens/{id} - Deleta uma mensagem pelo ID
 app.delete('/mensagens/:id',(req, res) => {
-    const id = req.params.id - 1;
+             
+const id = +req.params.id;
+                           
+const mensagem = getMensagemById(id);
 
-    delete mensagens[id] 
+if (!mensagem) {
+  res.send('Mensagem não encontrada.');
 
-    res.send('Mensagem deletada com sucesso.');
+  return;
+};
+
+const index = mensagens.indexOf(mensagem);
+    
+delete mensagens[index];
+
+res.send('Mensagem deletada com sucesso.');
 });
 
 app.listen(port, () => {
-    console.info(`app rodando em http://localhost:${port}`);
+  console.info(`app rodando em http://localhost:${port}`);
 });
